@@ -1,5 +1,1 @@
-{% extends 'base.html' %}{% block content %}
-<a class="btn gray" href="{{url_for('index')}}">الرئيسية</a><h2>روابط واتساب</h2>
-<p class="small">اضغط على كل رابط لفتح واتساب وإرسال الرسالة. بعض الأجهزة تمنع الإرسال التلقائي الكامل.</p>
-{% for l in links %}<div class="card"><b>{{l.name}}</b><br>{{l.phone}}<br><a class="btn green" target="_blank" href="{{l.url}}">فتح واتساب</a></div>{% endfor %}
-{% endblock %}
+{% extends 'base.html' %}{% block content %}<div class="head"><h1>العقارات</h1>{% if current_user.role!='viewer' %}<a class="btn" href="{{url_for('property_new')}}">إضافة عقار</a>{% endif %}</div><table><tr><th>العقار</th><th>الحي</th><th>السعر</th><th>الحالة</th><th>حصري</th></tr>{% for p in properties %}<tr><td>{{p.title}}</td><td>{{p.district}}</td><td>{{p.price|sar}}</td><td>{{p.status}}</td><td>{{'⭐' if p.exclusive else '-'}}</td></tr>{% endfor %}</table>{% endblock %}

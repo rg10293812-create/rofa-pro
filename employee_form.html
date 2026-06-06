@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block content %}<h1>لوحة التحكم</h1><div class="cards"><div>الموظفون<b>{{data.employees}}</b></div><div>العقارات<b>{{data.properties}}</b></div><div>العروض<b>{{data.offers}}</b></div><div>الصفقات<b>{{data.deals}}</b></div><div>إجمالي الصفقات<b>{{data.total|sar}}</b></div></div>{% endblock %}

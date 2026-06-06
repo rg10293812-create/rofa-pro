@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: rufa-cloud-new
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: rufa-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: admin123
+
+databases:
+  - name: rufa-db
+    databaseName: rufa_db
+    user: rufa_user

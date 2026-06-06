@@ -1,15 +1,1 @@
-{% extends 'base.html' %}{% block content %}
-<h2>لوحة تحكم روفا جولدن</h2>
-<p class="small">لوحة مختصرة ومنظمة للعقارات، العروض، الموظفين، والصفقات الخارجية.</p>
-<div class="dash">
-  <div class="stat">العقارات<b>{{stats.properties}}</b></div>
-  <div class="stat">العروض النشطة<b>{{stats.offers}}</b></div>
-  <div class="stat">الموظفون<b>{{stats.employees}}</b></div>
-  <div class="stat">الصفقات الخارجية<b>{{stats.external_deals}}</b></div>
-  <div class="stat">إجمالي الصفقات<b>{{stats.sales|sar}}</b></div>
-</div>
-<div class="card"><h3>صلاحيتك الحالية: {{role_labels.get(current_user.role,current_user.role)}}</h3>
-{% if current_user.role == 'admin' %}<p>لديك جميع الصلاحيات.</p>{% elif current_user.role == 'marketer' %}<p>حسابك موظف، وتظهر نسبتك عند توزيع الصفقات الخارجية.</p>{% else %}<p>حسب الصلاحية المسندة لحسابك.</p>{% endif %}</div>
-<h3>أداء الموظفين</h3>
-<table><tr><th>الموظف</th><th>العروض</th><th>المبيعات المسجلة</th><th>العمولة</th><th>الرصيد</th></tr>{% for u,st in top %}<tr><td>{{u.full_name or u.username}}</td><td>{{st.offers_count}}</td><td>{{st.total_sales|sar}}</td><td>{{st.total_commission|sar}}</td><td>{{st.balance|sar}}</td></tr>{% endfor %}</table>
-{% endblock %}
+{% extends 'base.html' %}{% block content %}<div class="head"><h1>إدارة الموظفين</h1><a class="btn" href="{{url_for('employee_new')}}">إضافة موظف</a></div><table><tr><th>الاسم</th><th>المستخدم</th><th>الجوال</th><th>الدور</th><th>النسبة الأساسية</th><th>الحالة</th></tr>{% for e in employees %}<tr><td>{{e.full_name}}</td><td>{{e.username}}</td><td>{{e.phone}}</td><td>{{roles.get(e.role,e.role)}}</td><td>{{e.base_rate}}%</td><td>{{'نشط' if e.active else 'موقوف'}}</td></tr>{% endfor %}</table>{% endblock %}
