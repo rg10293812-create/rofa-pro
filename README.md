@@ -1,13 +1,11 @@
-# RUFA Cloud New
+# RUFA Cloud New System
 
-نظام سحابي جديد لروفا جولدن: موظفين، عقارات، عروض، صفقات خارجية وتوزيع نسب.
-
-## تشغيل محلي
-pip install -r requirements.txt
-python app.py
+تشغيل Render:
+- Build Command: `pip install -r requirements.txt`
+- Start Command: `gunicorn app:app`
 
 الدخول الافتراضي:
-admin / admin123
+- username: admin
+- password: admin123
 
-## Render
-ارفع الملفات إلى GitHub ثم اربط المستودع في Render. استخدم render.yaml أو أنشئ Web Service + PostgreSQL.
+ملاحظة: يحتوي app.py على قوالب احتياطية داخلية لمنع خطأ TemplateNotFound إذا لم تُرفع templates.
