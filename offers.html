@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% block content %}
+<a class="btn gray" href="{{url_for('index')}}">الرئيسية</a><h2>روابط واتساب</h2>
+<p class="small">اضغط على كل رابط لفتح واتساب وإرسال الرسالة. بعض الأجهزة تمنع الإرسال التلقائي الكامل.</p>
+{% for l in links %}<div class="card"><b>{{l.name}}</b><br>{{l.phone}}<br><a class="btn green" target="_blank" href="{{l.url}}">فتح واتساب</a></div>{% endfor %}
+{% endblock %}

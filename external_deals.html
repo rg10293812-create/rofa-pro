@@ -1,0 +1,30 @@
+{% extends 'base.html' %}{% block content %}
+<a class="btn gray" href="{{url_for('system_health')}}">رجوع للصيانة</a>
+<h2>إدارة النسخ الاحتياطية</h2>
+<div class="card">
+  <h3>نسخة احتياطية فورية</h3>
+  <p>النسخة تحفظ قاعدة البيانات والبيانات المهمة داخل ملف ZIP، ويتم الاحتفاظ بآخر {{keep_last}} نسخة فقط.</p>
+  <form method="post" action="{{url_for('backup_create_route')}}">
+    <button class="btn gold">📦 إنشاء وتحميل نسخة احتياطية الآن</button>
+  </form>
+  <p class="small">النسخ التلقائي يعمل يومياً الساعة {{auto_hour}}:00 صباحاً حسب وقت الخادم إذا كانت الاستضافة تدعم المهام الخلفية.</p>
+</div>
+<table>
+<tr><th>اسم النسخة</th><th>تاريخ الإنشاء</th><th>الحجم</th><th>إجراء</th></tr>
+{% for b in backups %}
+<tr>
+<td>{{b.name}}</td>
+<td>{{b.created.strftime('%Y-%m-%d %H:%M')}}</td>
+<td>{{(b.size/1024/1024)|round(2)}} MB</td>
+<td>
+  <a class="btn green" href="{{url_for('backup_download', name=b.name)}}">تحميل</a>
+  <form method="post" action="{{url_for('backup_delete', name=b.name)}}" style="display:inline" onsubmit="return confirm('حذف النسخة الاحتياطية؟')">
+    <button class="btn red">حذف</button>
+  </form>
+</td>
+</tr>
+{% else %}
+<tr><td colspan="4">لا توجد نسخ احتياطية حتى الآن.</td></tr>
+{% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rufa Golden Cloud</title>
+  <style>
+    *{box-sizing:border-box} body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#0f1f18,#c8a85a);min-height:100vh;color:#fff;display:flex;align-items:center;justify-content:center;padding:25px}.wrap{width:min(1050px,100%);text-align:center}.brand{font-size:42px;font-weight:800;margin-bottom:8px}.sub{opacity:.9;margin-bottom:38px;font-size:18px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}.card{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(12px);border-radius:28px;padding:32px;box-shadow:0 20px 45px rgba(0,0,0,.25);transition:.25s;text-decoration:none;color:#fff}.card:hover{transform:translateY(-6px);background:rgba(255,255,255,.2)}.icon{font-size:54px;margin-bottom:12px}.title{font-size:28px;font-weight:800;margin:10px 0}.desc{line-height:1.9;opacity:.92}.btn{display:inline-block;margin-top:22px;background:#0b4d2a;color:white;padding:14px 34px;border-radius:999px;font-weight:700}.visitor .btn{background:#8a6a20}.footer{margin-top:28px;opacity:.75;font-size:13px}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="brand">Rufa Golden Cloud</div>
+    <div class="sub">اختر طريقة الدخول المناسبة لك</div>
+    <section class="cards">
+      <a class="card" href="{{ url_for('member_entry') }}">
+        <div class="icon">👤</div>
+        <div class="title">عضو</div>
+        <div class="desc">دخول خاص للمدير والمسوقين لإدارة العقارات والعروض والأرقام والصلاحيات.</div>
+        <span class="btn">تسجيل الدخول</span>
+      </a>
+      <a class="card visitor" href="{{ url_for('visitor_offers') }}">
+        <div class="icon">🏡</div>
+        <div class="title">زائر</div>
+        <div class="desc">مشاهدة العروض العقارية المتاحة بشكل احترافي مع الصور والمعلومات الأساسية.</div>
+        <span class="btn">عرض الفلل والعروض</span>
+      </a>
+    </section>
+    <div class="footer">شركة روفا جولدن العقارية</div>
+  </main>
+</body>
+</html>

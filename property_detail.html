@@ -1,0 +1,13 @@
+{% extends 'base.html' %}{% block content %}
+<a class="btn gray" href="{{url_for('index')}}">الرئيسية</a><h2>العقارات</h2>
+<form method="get"><input name="q" value="{{q}}" placeholder="بحث"><button class="btn">بحث</button></form>
+{% if current_user.role in ['admin','executive','marketer'] %}
+<form id="propertyForm" method="post" onsubmit="clearDraft('propertyForm')">
+<div class="autosave" id="propertyForm_note">الحقول تحفظ كمسودة تلقائياً على الجهاز، وعند الضغط على حفظ يتم حفظ العقار على السحابة.</div>
+<div class="row"><input name="name" placeholder="اسم العقار"><input name="location" placeholder="الموقع"><input name="price" placeholder="السعر"><select name="status"><option value="available">متاح</option><option value="reserved">محجوز</option><option value="sold">مباع</option></select>{% if current_user.role in ['admin','executive'] %}<select name="ext_marketer_id"><option value="">اختر المسوق الخارجي - اختياري</option>{% for m in marketers %}<option value="{{m.id}}">{{m.name}}</option>{% endfor %}</select>{% endif %}</div>
+<textarea name="specs" placeholder="المواصفات كاملة بالترتيب"></textarea>
+<button class="btn green">حفظ العقار سحابياً</button>
+</form><script>loadDraft('propertyForm')</script>
+{% endif %}
+<table><tr><th>العقار</th><th>الموقع</th><th>السعر</th><th>الحالة</th><th>الخيارات</th></tr>{% for r in rows %}<tr><td>{{r.name}}</td><td>{{r.location}}</td><td>{{r.price}}</td><td><span class="status {{r.status}}">{{status_labels.get(r.status,r.status)}}</span></td><td><a class="btn" href="{{url_for('property_detail',pid=r.id)}}">رؤية التفاصيل</a><form method="post" action="{{url_for('property_status',pid=r.id)}}" style="display:inline"><select name="status" style="width:auto"><option value="available">متاح</option><option value="reserved">محجوز</option><option value="sold">مباع</option></select><button class="btn gold">تحديث</button></form>{% if can_delete_content(current_user) %}<form method="post" action="{{url_for('delete_property',pid=r.id)}}" style="display:inline"><button class="btn red" onclick="return confirm('حذف؟')">حذف</button></form>{% endif %}</td></tr>{% endfor %}</table>
+{% endblock %}

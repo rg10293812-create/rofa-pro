@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block content %}
+<a class="btn gray" href="{{url_for('properties')}}">رجوع</a>
+<h2>{{row.name}}</h2>
+<p><b>الموقع:</b> {{row.location}}</p><p><b>السعر:</b> {{row.price}}</p>
+<h3>المواصفات كاملة</h3><div class="card" style="white-space:pre-wrap;line-height:1.9">{{row.specs}}</div>
+{% endblock %}

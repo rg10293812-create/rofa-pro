@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ offer.title or 'تفاصيل العرض' }}</title>
+  <style>
+    *{box-sizing:border-box} body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f5f1e8;color:#1f1f1f}.top{background:linear-gradient(135deg,#0e281d,#b89545);color:white;padding:24px 16px}.top .inner{max-width:1100px;margin:auto}.top h1{margin:0 0 10px;font-size:32px}.actions a{display:inline-block;background:white;color:#0e281d;text-decoration:none;padding:11px 22px;border-radius:999px;font-weight:bold;margin:5px}.wrap{max-width:1100px;margin:24px auto;padding:0 16px}.main-img{background:white;border-radius:24px;overflow:hidden;box-shadow:0 14px 35px rgba(0,0,0,.12);margin-bottom:20px}.main-img img{width:100%;max-height:520px;object-fit:cover;display:block}.placeholder{height:320px;display:flex;align-items:center;justify-content:center;font-size:70px;color:#b89545}.info{background:white;border-radius:20px;padding:22px;box-shadow:0 12px 30px rgba(0,0,0,.08);margin-bottom:22px}.price{font-size:22px;color:#a37718;font-weight:800;margin:10px 0}.desc{white-space:pre-wrap;line-height:2;color:#333}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.gallery img{width:100%;height:220px;object-fit:cover;border-radius:16px;box-shadow:0 10px 24px rgba(0,0,0,.1);background:white}.contact{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.contact a{background:#0e281d;color:white;text-decoration:none;border-radius:12px;padding:13px 18px;font-weight:bold}.contact .gold{background:#b89545;color:#111}
+  </style>
+</head>
+<body>
+  <header class="top"><div class="inner">
+    <h1>{{ offer.title or 'تفاصيل العرض' }}</h1>
+    <div class="actions"><a href="{{ url_for('visitor_offers') }}">رجوع للعروض</a><a href="{{ url_for('landing') }}">القائمة الرئيسية</a></div>
+  </div></header>
+  <main class="wrap">
+    <section class="main-img">
+      {% if images and images[0] %}<img src="{{ images[0] }}" alt="{{ offer.title }}">{% else %}<div class="placeholder">🏡</div>{% endif %}
+    </section>
+    <section class="info">
+      <h2>{{ offer.title or 'مشروع عقاري' }}</h2>
+      {% if offer.price %}<div class="price">{{ offer.price }}</div>{% endif %}
+      {% if offer.description %}<div class="desc">{{ offer.description }}</div>{% endif %}
+      <div class="contact">
+        <a class="gold" href="https://wa.me/966" target="_blank">تواصل واتساب</a>
+        <a href="tel:">اتصال</a>
+      </div>
+    </section>
+    {% if images|length > 1 %}
+    <h2>صور المشروع</h2>
+    <section class="gallery">
+      {% for img in images %}<img src="{{ img }}" alt="صورة {{ loop.index }}">{% endfor %}
+    </section>
+    {% endif %}
+  </main>
+</body>
+</html>

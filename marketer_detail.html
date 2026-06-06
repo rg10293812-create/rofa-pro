@@ -1,0 +1,23 @@
+{% extends 'base.html' %}{% block content %}
+<h2>إدارة المسوقين الخارجيين</h2>
+<p class="small">هذه الصفحة للمسوقين من خارج الشركة فقط. حسابات موظفي الشركة الداخلية تبقى في صفحة إدارة المستخدمين.</p>
+<div class="card">
+  <h3>إضافة مسوق خارجي</h3>
+  <form method="post">
+    <div class="row">
+      <input name="name" placeholder="اسم المسوق" required>
+      <input name="phone" placeholder="رقم الجوال">
+      <input name="email" placeholder="البريد الإلكتروني">
+      <input name="company" placeholder="الجهة / الشركة - اختياري">
+      <input name="source" placeholder="مصدر المسوق" value="خارجي">
+      <input name="commission_rate" placeholder="نسبة العمولة %" value="2.5">
+      <select name="status"><option value="active">نشط</option><option value="paused">موقوف</option></select>
+    </div>
+    <textarea name="notes" placeholder="ملاحظات عن الاتفاق أو طريقة العمل"></textarea>
+    <button class="btn green">إضافة المسوق</button>
+  </form>
+</div>
+<h3>قائمة المسوقين الخارجيين</h3>
+<table><tr><th>المسوق</th><th>الجوال</th><th>الجهة</th><th>الحالة</th><th>النسبة</th><th>العروض</th><th>الصفقات</th><th>العمولة</th><th>المصروف</th><th>الرصيد</th><th>الملف</th></tr>
+{% for m,st in rows %}<tr><td><b>{{m.name}}</b></td><td>{{m.phone}}</td><td>{{m.company}}</td><td>{{'نشط' if m.status=='active' else 'موقوف'}}</td><td>{{m.commission_rate}}%</td><td>{{st.offers_count + st.properties_count}}</td><td>{{st.total_sales|sar}}</td><td>{{st.total_commission|sar}}</td><td>{{st.total_paid|sar}}</td><td><b>{{st.balance|sar}}</b></td><td><a class="btn" href="{{url_for('marketer_detail',uid=m.id)}}">دخول</a></td></tr>{% endfor %}</table>
+{% endblock %}

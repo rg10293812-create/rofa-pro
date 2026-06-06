@@ -1,0 +1,13 @@
+{% extends 'base.html' %}{% block content %}
+<div class="loginbox">
+<h2>تسجيل الدخول للأعضاء</h2>
+<form method="post" autocomplete="off">
+<input name="username" placeholder="اسم المستخدم" required autocomplete="username">
+<input name="password" type="password" placeholder="كلمة المرور" required autocomplete="current-password">
+<button class="btn green" style="width:100%">دخول</button>
+</form>
+<div style="text-align:center;margin-top:14px">
+<a class="btn gray" href="{{ url_for('landing') }}">رجوع للقائمة الرئيسية</a>
+</div>
+</div>
+{% endblock %}
