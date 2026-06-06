@@ -1,64 +1,30 @@
 {% extends 'base.html' %}{% block content %}
-<h2>إدارة الصفقات الخارجية</h2>
-<p class="small">هذا القسم لإدارة الصفقات الخارجية وتقسيمها احترافياً: نسبة شركة روفا جولدن، نسبة الخارجي / الوسيط، ونسب الموظفين الداخليين حسب الحسابات الموجودة في النظام.</p>
-
-<div class="dash">
-  <div class="stat">عدد الصفقات<b>{{st.count}}</b></div>
-  <div class="stat">إجمالي المبيعات<b>{{st.total_value|sar}}</b></div>
-  <div class="stat">عمولة الشركة<b>{{st.company_commission|sar}}</b></div>
-  <div class="stat">نسب الخارجي والموظفين<b>{{(st.external_amount + st.internal_amount)|sar}}</b></div>
-  <div class="stat">صافي الشركة<b>{{st.net|sar}}</b></div>
-</div>
-
+<h2>الصفقات الخارجية</h2>
+<p class="small">أنشئ صفقة خارجية ثم وزّع النسب بين شركة روفا جولدن، الوسيط الخارجي، وموظفي الشركة الموجودين في إدارة الموظفين.</p>
 <div class="card">
-  <h3>إنشاء صفقة خارجية</h3>
-  <form method="post" id="dealForm">
-    <div class="row">
-      <input name="title" placeholder="اسم الصفقة / عنوانها" required>
-      <input name="property_name" placeholder="العقار أو المشروع">
-      <input name="deal_value" placeholder="قيمة الصفقة" required>
-      <input name="company_rate" placeholder="نسبة شركة روفا جولدن %" value="2.5">
-      <input name="client_name" placeholder="اسم العميل">
-      <input name="client_phone" placeholder="جوال العميل">
-      <input name="ext_marketer_name" placeholder="اسم الخارجي / الوسيط / الوسيط">
-      <input name="ext_marketer_phone" placeholder="جوال الخارجي / الوسيط / الوسيط">
-      <input name="ext_marketer_rate" placeholder="نسبة الخارجي / الوسيط %" value="0">
-      <select name="status"><option value="open">مفتوحة</option><option value="closed">مكتملة</option><option value="cancelled">ملغاة</option></select>
-    </div>
-
-    <h4>توزيع نسب موظفي الشركة الداخليين</h4>
-    <p class="small">تظهر هنا أسماء الحسابات الموجودة في إدارة الموظفين. عدّل النسبة لكل موظف له نصيب في الصفقة، واترك غير المستحق صفر.</p>
-    <div class="row">
-      {% for u in users %}
-      <div class="mini-form">
-        <label>{{u.full_name or u.username}} <span class="small">({{role_labels.get(u.role,u.role)}})</span></label>
-        <input type="hidden" name="share_user_id" value="{{u.id}}">
-        <input name="share_rate" placeholder="نسبة الموظف %" value="0">
-        <span class="small">النسبة المحفوظة بحسابه: {{u.commission_rate}}%</span>
-      </div>
-      {% endfor %}
-    </div>
-    <textarea name="notes" placeholder="ملاحظات الصفقة والاتفاق"></textarea>
-    <button class="btn green">إنشاء الصفقة وتقسيم نسب الموظفين</button>
-  </form>
+<h3>إنشاء صفقة خارجية</h3>
+<form method="post">
+  <div class="row">
+    <input name="deal_name" placeholder="اسم الصفقة" required>
+    <input name="project_name" placeholder="اسم المشروع / العقار">
+    <input name="company_name" placeholder="الشركة / الطرف الخارجي">
+    <input name="external_marketer_name" placeholder="اسم الوسيط أو المسوق الخارجي">
+    <input name="external_marketer_phone" placeholder="جوال الوسيط الخارجي">
+    <input name="deal_value" type="number" step="0.01" placeholder="قيمة العمولة أو المبلغ المراد توزيعه" required>
+    <input name="company_rate" type="number" step="0.01" placeholder="نسبة الشركة %" required>
+    <input name="external_rate" type="number" step="0.01" placeholder="نسبة الوسيط الخارجي %">
+    <select name="status"><option>مفتوحة</option><option>مكتملة</option><option>ملغاة</option></select>
+  </div>
+  <h3>توزيع نسب الموظفين</h3>
+  <p class="small">ضع نسبة لكل موظف مشارك فقط، واترك الباقي فارغاً.</p>
+  <table><tr><th>الموظف</th><th>الصلاحية</th><th>النسبة الأساسية</th><th>نسبة هذه الصفقة %</th></tr>
+  {% for e in employees %}<tr><td>{{e.full_name or e.username}}</td><td>{{role_labels.get(e.role,e.role)}}</td><td>{{e.commission_rate}}%</td><td><input name="employee_rate_{{e.id}}" type="number" step="0.01" placeholder="0"></td></tr>{% endfor %}
+  </table>
+  <textarea name="notes" placeholder="ملاحظات الصفقة"></textarea>
+  <button class="btn green">حفظ الصفقة وتوزيع النسب</button>
+</form>
 </div>
-
-<h3>قائمة الصفقات الخارجية</h3>
-<table>
-<tr><th>الصفقة</th><th>العقار</th><th>العميل</th><th>قيمة الصفقة</th><th>عمولة الشركة</th><th>الخارجي / الوسيط</th><th>نصيبه</th><th>صافي الشركة</th><th>الحالة</th><th>الدخول</th></tr>
-{% for d in deals %}
-<tr>
-  <td><b>{{d.title}}</b><br><span class="small">{{d.created_at.strftime('%Y-%m-%d')}}</span></td>
-  <td>{{d.property_name}}</td>
-  <td>{{d.client_name}}<br><span class="small">{{d.client_phone}}</span></td>
-  <td>{{d.deal_value|sar}}</td>
-  <td>{{d.company_commission|sar}}<br><span class="small">{{d.company_rate}}%</span></td>
-  <td>{{d.ext_marketer_name}}<br><span class="small">{{d.ext_marketer_phone}}</span></td>
-  <td>{{d.ext_marketer_amount|sar}}<br><span class="small">{{d.ext_marketer_rate}}%</span></td>
-  <td><b>{{d.company_net|sar}}</b></td>
-  <td>{{{'open':'مفتوحة','closed':'مكتملة','cancelled':'ملغاة'}.get(d.status,d.status)}}</td>
-  <td><a class="btn" href="{{url_for('external_deal_detail',deal_id=d.id)}}">تفاصيل</a></td>
-</tr>
-{% endfor %}
-</table>
+<h3>الصفقات المسجلة</h3>
+<table><tr><th>الصفقة</th><th>المشروع</th><th>القيمة</th><th>الشركة</th><th>الوسيط</th><th>الموظفون</th><th>المتبقي</th><th>الحالة</th><th>تفاصيل</th></tr>
+{% for r in rows %}<tr><td>{{r.deal_name}}</td><td>{{r.project_name}}</td><td>{{r.deal_value|sar}}</td><td>{{r.company_amount|sar}}<br><span class="small">{{r.company_rate}}%</span></td><td>{{r.external_amount|sar}}<br><span class="small">{{r.external_rate}}%</span></td><td>{{r.total_employee_amount()|sar}}<br><span class="small">{{r.total_employee_rate()}}%</span></td><td>{{r.remaining_amount()|sar}}</td><td>{{r.status}}</td><td><a class="btn" href="{{url_for('external_deal_detail',did=r.id)}}">عرض</a></td></tr>{% endfor %}</table>
 {% endblock %}

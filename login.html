@@ -1,20 +1,15 @@
 {% extends 'base.html' %}{% block content %}
-<h2>إدارة العروض الظاهرة للزوار</h2>
-<p class="small">هذه الصفحة خاصة بإضافة وتحديث العروض التسويقية التي تظهر للزائر. تم حذف خيار رسائل الزبائن من هذه القائمة.</p>
-
-<div class="card">
+<h2>العروض الظاهرة للزائر</h2>
 <h3>إضافة عرض تسويقي للزائر</h3>
 {% if current_user.role in ['admin','executive','marketer'] %}
 <form id="offerForm" method="post" enctype="multipart/form-data" onsubmit="clearDraft('offerForm')">
   <div class="autosave" id="offerForm_note">بيانات العرض تحفظ كمسودة تلقائياً، والصور تحفظ عند الضغط على إضافة العرض.</div>
-  <div class="row"><input name="title" placeholder="اسم المشروع مثل: فلة الحمراء" required><input name="price" placeholder="السعر"><input type="file" name="images" accept="image/*" multiple><select name="status"><option value="available">متاح</option><option value="reserved">محجوز</option><option value="sold">مباع</option></select>{% if current_user.role in ['admin','executive'] %}<select name="ext_marketer_id"><option value="">اختر المسوق الخارجي - اختياري</option>{% for m in marketers %}<option value="{{m.id}}">{{m.name}}</option>{% endfor %}</select>{% endif %}</div>
+  <div class="row"><input name="title" placeholder="اسم المشروع مثل: فلة الحمراء"><input name="price" placeholder="السعر"><input type="file" name="images" accept="image/*" multiple><select name="status"><option value="available">متاح</option><option value="reserved">محجوز</option><option value="sold">مباع</option></select>{% if current_user.role in ['admin','executive'] %}<select name="marketer_id"><option value="">اختر الموظف - اختياري</option>{% for m in marketers %}<option value="{{m.id}}">{{m.full_name or m.username}}</option>{% endfor %}</select>{% endif %}</div>
   <p class="small">اختر أكثر من صورة: الصورة الأولى تظهر كصورة رئيسية للزائر، وباقي الصور تظهر داخل تفاصيل المشروع.</p>
   <textarea name="description" placeholder="تفاصيل المشروع: الحي، المساحة، الغرف، الضمانات، المميزات، الموقع..."></textarea>
-  <button class="btn gold">إضافة العرض</button>
+  <button class="btn gold">إضافة العرض سحابياً</button>
 </form><script>loadDraft('offerForm')</script>
 {% else %}<p class="small">صلاحيتك مشاهدة العروض فقط.</p>{% endif %}
-</div>
-
 <h3>العروض الحالية</h3>
-{% for o in offers %}<div class="card"><h3>{{o.title}}</h3><p><b>السعر:</b> {{o.price}} | <b>الحالة:</b> <span class="status {{o.status}}">{{status_labels.get(o.status,o.status)}}</span> | <b>المسوق الخارجي:</b> {{external_marketer_name(o.ext_marketer_id)}}</p><p style="white-space:pre-wrap">{{o.description}}</p>{% if o.image_data %}<img class="img" src="{{o.image_data}}">{% endif %}<p><a class="btn" href="{{ url_for('visitor_offer_detail', oid=o.id) }}" target="_blank">معاينة كزائر</a></p>{% if current_user.role in ['admin','executive','marketer'] %}<form method="post" action="{{url_for('offer_status',oid=o.id)}}"><select name="status" style="width:auto"><option value="available" {% if o.status=='available' %}selected{% endif %}>متاح</option><option value="reserved" {% if o.status=='reserved' %}selected{% endif %}>محجوز</option><option value="sold" {% if o.status=='sold' %}selected{% endif %}>مباع</option></select><button class="btn gold">تحديث الحالة</button></form>{% endif %}{% if can_delete_content(current_user) %}<form method="post" action="{{url_for('delete_offer',oid=o.id)}}"><button class="btn red" onclick="return confirm('حذف العرض؟')">حذف</button></form>{% endif %}</div>{% else %}<p class="small">لا توجد عروض حالياً.</p>{% endfor %}
+{% for o in offers %}<div class="card"><h3>{{o.title}}</h3><p><b>السعر:</b> {{o.price}} | <b>الحالة:</b> <span class="status {{o.status}}">{{status_labels.get(o.status,o.status)}}</span></p><p style="white-space:pre-wrap">{{o.description}}</p>{% if o.image_data %}<img class="img" src="{{o.image_data}}">{% endif %}<p><a class="btn" href="{{ url_for('visitor_offer_detail', oid=o.id) }}" target="_blank">معاينة كزائر</a></p>{% if current_user.role in ['admin','executive','marketer'] %}<form method="post" action="{{url_for('offer_status',oid=o.id)}}"><select name="status" style="width:auto"><option value="available">متاح</option><option value="reserved">محجوز</option><option value="sold">مباع</option></select><button class="btn gold">تحديث الحالة</button></form>{% endif %}{% if can_delete_content(current_user) %}<form method="post" action="{{url_for('delete_offer',oid=o.id)}}"><button class="btn red" onclick="return confirm('حذف العرض؟')">حذف</button></form>{% endif %}</div>{% endfor %}
 {% endblock %}

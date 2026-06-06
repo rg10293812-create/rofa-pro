@@ -1,20 +1,15 @@
 {% extends 'base.html' %}{% block content %}
 <h2>لوحة تحكم روفا جولدن</h2>
-<p class="small">واجهة مرتبة بدون تكرار أزرار. الصفقات الخارجية أصبحت هي مركز إدارة النسب والعمولات.</p>
+<p class="small">لوحة مختصرة ومنظمة للعقارات، العروض، الموظفين، والصفقات الخارجية.</p>
 <div class="dash">
   <div class="stat">العقارات<b>{{stats.properties}}</b></div>
   <div class="stat">العروض النشطة<b>{{stats.offers}}</b></div>
-  <div class="stat">الصفقات الخارجية<b>{{stats.deals}}</b></div>
-  <div class="stat">إجمالي الصفقات<b>{{stats.deal_value|sar}}</b></div>
-  <div class="stat">صافي الشركة<b>{{stats.company_net|sar}}</b></div>
+  <div class="stat">الموظفون<b>{{stats.employees}}</b></div>
+  <div class="stat">الصفقات الخارجية<b>{{stats.external_deals}}</b></div>
+  <div class="stat">إجمالي الصفقات<b>{{stats.sales|sar}}</b></div>
 </div>
-<div class="card"><h3>الأقسام الرئيسية</h3><div class="action-grid">
-<a href="{{url_for('properties')}}">🏠 العقارات<span>إضافة ومتابعة العقارات</span></a>
-<a href="{{url_for('offers')}}">📣 العروض<span>العروض الظاهرة للزوار</span></a>
-{% if current_user.role in ['admin','executive'] %}<a href="{{url_for('external_deals')}}">🤝 الصفقات الخارجية<span>تقسيم نسبة الشركة والخارجي وأعضاء الشركة</span></a><a href="{{url_for('backups_page')}}">📦 النسخ الاحتياطي<span>حفظ واسترجاع البيانات</span></a>{% endif %}
-<a href="{{url_for('visitor_offers')}}" target="_blank">👁️ معاينة الزائر<span>عرض الموقع كما يراه العميل</span></a>
-{% if current_user.role == 'admin' %}<a href="{{url_for('system_health')}}">🛠️ صيانة النظام<span>الأخطاء والإصلاح التلقائي</span></a>{% endif %}
-</div></div>
-<h3>آخر الصفقات الخارجية</h3>
-<table><tr><th>الصفقة</th><th>قيمة الصفقة</th><th>عمولة الشركة</th><th>نصيب الخارجي</th><th>صافي الشركة</th><th>الحالة</th></tr>{% for d in recent %}<tr><td><a href="{{url_for('external_deal_detail',deal_id=d.id)}}">{{d.title}}</a></td><td>{{d.deal_value|sar}}</td><td>{{d.company_commission|sar}}</td><td>{{d.ext_marketer_amount|sar}}</td><td>{{d.company_net|sar}}</td><td>{{{'open':'مفتوحة','closed':'مكتملة','cancelled':'ملغاة'}.get(d.status,d.status)}}</td></tr>{% endfor %}</table>
+<div class="card"><h3>صلاحيتك الحالية: {{role_labels.get(current_user.role,current_user.role)}}</h3>
+{% if current_user.role == 'admin' %}<p>لديك جميع الصلاحيات.</p>{% elif current_user.role == 'marketer' %}<p>حسابك موظف، وتظهر نسبتك عند توزيع الصفقات الخارجية.</p>{% else %}<p>حسب الصلاحية المسندة لحسابك.</p>{% endif %}</div>
+<h3>أداء الموظفين</h3>
+<table><tr><th>الموظف</th><th>العروض</th><th>المبيعات المسجلة</th><th>العمولة</th><th>الرصيد</th></tr>{% for u,st in top %}<tr><td>{{u.full_name or u.username}}</td><td>{{st.offers_count}}</td><td>{{st.total_sales|sar}}</td><td>{{st.total_commission|sar}}</td><td>{{st.balance|sar}}</td></tr>{% endfor %}</table>
 {% endblock %}

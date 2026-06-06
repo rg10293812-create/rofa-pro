@@ -1,0 +1,15 @@
+{% extends 'base.html' %}{% block content %}
+<a class="btn gray" href="{{url_for('external_deals')}}">رجوع للصفقات الخارجية</a>
+<h2>{{row.deal_name}}</h2>
+<div class="dash">
+  <div class="stat">قيمة التوزيع<b>{{row.deal_value|sar}}</b></div>
+  <div class="stat">نصيب الشركة<b>{{row.company_amount|sar}}</b></div>
+  <div class="stat">نصيب الوسيط<b>{{row.external_amount|sar}}</b></div>
+  <div class="stat">نصيب الموظفين<b>{{row.total_employee_amount()|sar}}</b></div>
+  <div class="stat">المتبقي<b>{{row.remaining_amount()|sar}}</b></div>
+</div>
+<div class="card"><h3>معلومات الصفقة</h3><p><b>المشروع:</b> {{row.project_name}}</p><p><b>الشركة / الطرف:</b> {{row.company_name}}</p><p><b>الوسيط الخارجي:</b> {{row.external_marketer_name}} - {{row.external_marketer_phone}}</p><p><b>الحالة:</b> {{row.status}}</p><p style="white-space:pre-wrap"><b>ملاحظات:</b><br>{{row.notes}}</p></div>
+<h3>توزيع النسب</h3>
+<table><tr><th>الطرف</th><th>النسبة</th><th>المبلغ</th></tr><tr><td>شركة روفا جولدن</td><td>{{row.company_rate}}%</td><td>{{row.company_amount|sar}}</td></tr><tr><td>الوسيط الخارجي: {{row.external_marketer_name}}</td><td>{{row.external_rate}}%</td><td>{{row.external_amount|sar}}</td></tr>{% for s in row.employee_splits() %}<tr><td>الموظف: {{s.name}}</td><td>{{s.rate}}%</td><td>{{s.amount|sar}}</td></tr>{% endfor %}</table>
+{% if current_user.role=='admin' %}<form method="post" action="{{url_for('external_deal_delete',did=row.id)}}"><button class="btn red" onclick="return confirm('حذف الصفقة؟')">حذف الصفقة</button></form>{% endif %}
+{% endblock %}
