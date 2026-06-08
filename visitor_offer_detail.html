@@ -3,40 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>عروض روفا جولدن</title>
+  <title>Rufa Golden Cloud</title>
   <style>
-    *{box-sizing:border-box} body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f5f1e8;color:#1f1f1f}.hero{background:linear-gradient(135deg,#0e281d,#b89545);color:white;padding:30px 18px;text-align:center}.hero h1{margin:0;font-size:34px}.hero p{opacity:.9;margin:10px 0 18px}.back{display:inline-block;background:#fff;color:#10351f;text-decoration:none;padding:12px 26px;border-radius:999px;font-weight:bold}.wrap{max-width:1180px;margin:28px auto;padding:0 16px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}.card{background:white;border-radius:22px;overflow:hidden;box-shadow:0 14px 35px rgba(0,0,0,.12);text-decoration:none;color:#222;transition:.22s;display:block}.card:hover{transform:translateY(-5px);box-shadow:0 18px 45px rgba(0,0,0,.18)}.img{height:225px;background:linear-gradient(135deg,#ddd,#f7f7f7);display:flex;align-items:center;justify-content:center;font-size:55px;color:#b89545}.img img{width:100%;height:100%;object-fit:cover}.body{padding:18px}.name{font-size:22px;font-weight:800;margin-bottom:8px;color:#0e281d}.price{font-size:18px;font-weight:700;color:#a37718;margin:6px 0}.desc{color:#555;line-height:1.8;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.details{margin-top:14px;background:#0e281d;color:white;border-radius:12px;padding:11px;text-align:center;font-weight:bold}.empty{background:white;border-radius:18px;padding:28px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,.08)}
+    *{box-sizing:border-box} body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#0f1f18,#c8a85a);min-height:100vh;color:#fff;display:flex;align-items:center;justify-content:center;padding:25px}.wrap{width:min(1050px,100%);text-align:center}.brand{font-size:42px;font-weight:800;margin-bottom:8px}.sub{opacity:.9;margin-bottom:38px;font-size:18px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}.card{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(12px);border-radius:28px;padding:32px;box-shadow:0 20px 45px rgba(0,0,0,.25);transition:.25s;text-decoration:none;color:#fff}.card:hover{transform:translateY(-6px);background:rgba(255,255,255,.2)}.icon{font-size:54px;margin-bottom:12px}.title{font-size:28px;font-weight:800;margin:10px 0}.desc{line-height:1.9;opacity:.92}.btn{display:inline-block;margin-top:22px;background:#0b4d2a;color:white;padding:14px 34px;border-radius:999px;font-weight:700}.visitor .btn{background:#8a6a20}.footer{margin-top:28px;opacity:.75;font-size:13px}
   </style>
 </head>
 <body>
-  <header class="hero">
-    <h1>عروض روفا جولدن العقارية</h1>
-    <p>اختر المشروع لمشاهدة الصور والمواصفات والتفاصيل كاملة</p>
-    <a class="back" href="{{ url_for('landing') }}">الرجوع للقائمة الرئيسية</a>
-  </header>
   <main class="wrap">
-    <form method="get" style="background:white;border-radius:18px;padding:16px;margin-bottom:22px;box-shadow:0 10px 25px rgba(0,0,0,.08);display:grid;grid-template-columns:1fr 1fr 120px;gap:10px">
-      <input name="q" value="{{q or ''}}" placeholder="ابحث باسم المشروع أو السعر أو الوصف" style="padding:13px;border:1px solid #ddd;border-radius:12px;text-align:right">
-      <input name="location" value="{{location or ''}}" placeholder="الحي / الموقع" style="padding:13px;border:1px solid #ddd;border-radius:12px;text-align:right">
-      <button style="background:#0e281d;color:white;border:0;border-radius:12px;font-weight:bold">بحث</button>
-    </form>
-    {% if offers %}
-    <section class="grid">
-      {% for offer in offers %}
-      <a class="card" href="{{ url_for('visitor_offer_detail', oid=offer.id) }}">
-        <div class="img">{% if offer.image_data %}<img src="{{ offer.image_data }}" alt="{{ offer.title }}">{% else %}🏡{% endif %}</div>
-        <div class="body">
-          <div class="name">{{ offer.title or 'مشروع عقاري' }}</div>
-          {% if offer.price %}<div class="price">{{ offer.price }}</div>{% endif %}
-          {% if offer.description %}<div class="desc">{{ offer.description }}</div>{% endif %}
-          <div class="details">عرض التفاصيل والصور</div>
-        </div>
+    <div class="brand">Rufa Golden Cloud</div>
+    <div class="sub">اختر طريقة الدخول المناسبة لك</div>
+    <section class="cards">
+      <a class="card" href="{{ url_for('member_entry') }}">
+        <div class="icon">👤</div>
+        <div class="title">عضو</div>
+        <div class="desc">دخول خاص للمدير والمسوقين لإدارة العقارات والعروض والأرقام والصلاحيات.</div>
+        <span class="btn">تسجيل الدخول</span>
       </a>
-      {% endfor %}
+      <a class="card visitor" href="{{ url_for('visitor_offers') }}">
+        <div class="icon">🏡</div>
+        <div class="title">زائر</div>
+        <div class="desc">مشاهدة العروض العقارية المتاحة بشكل احترافي مع الصور والمعلومات الأساسية.</div>
+        <span class="btn">عرض الفلل والعروض</span>
+      </a>
     </section>
-    {% else %}
-    <div class="empty">لا توجد عروض متاحة حالياً.</div>
-    {% endif %}
+    <div class="footer">شركة روفا جولدن العقارية</div>
   </main>
 </body>
 </html>

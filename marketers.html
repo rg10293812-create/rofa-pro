@@ -3,34 +3,51 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ offer.title or 'تفاصيل العرض' }}</title>
+  <title>عروض روفا جولدن</title>
   <style>
-    *{box-sizing:border-box} body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f5f1e8;color:#1f1f1f}.top{background:linear-gradient(135deg,#0e281d,#b89545);color:white;padding:24px 16px}.top .inner{max-width:1100px;margin:auto}.top h1{margin:0 0 10px;font-size:32px}.actions a{display:inline-block;background:white;color:#0e281d;text-decoration:none;padding:11px 22px;border-radius:999px;font-weight:bold;margin:5px}.wrap{max-width:1100px;margin:24px auto;padding:0 16px}.main-img{background:white;border-radius:24px;overflow:hidden;box-shadow:0 14px 35px rgba(0,0,0,.12);margin-bottom:20px}.main-img img{width:100%;max-height:520px;object-fit:cover;display:block}.placeholder{height:320px;display:flex;align-items:center;justify-content:center;font-size:70px;color:#b89545}.info{background:white;border-radius:20px;padding:22px;box-shadow:0 12px 30px rgba(0,0,0,.08);margin-bottom:22px}.price{font-size:22px;color:#a37718;font-weight:800;margin:10px 0}.desc{white-space:pre-wrap;line-height:2;color:#333}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.gallery img{width:100%;height:220px;object-fit:cover;border-radius:16px;box-shadow:0 10px 24px rgba(0,0,0,.1);background:white}.contact{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.contact a{background:#0e281d;color:white;text-decoration:none;border-radius:12px;padding:13px 18px;font-weight:bold}.contact .gold{background:#b89545;color:#111}
+    *{box-sizing:border-box} body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f5f1e8;color:#1f1f1f}.hero{background:linear-gradient(135deg,#0e281d,#b89545);color:white;padding:30px 18px;text-align:center}.hero h1{margin:0;font-size:34px}.hero p{opacity:.95;margin:10px auto 18px;max-width:820px;line-height:1.9}.back{display:inline-block;background:#fff;color:#10351f;text-decoration:none;padding:12px 26px;border-radius:999px;font-weight:bold}.wrap{max-width:1180px;margin:28px auto;padding:0 16px}.filterbar{background:white;border-radius:18px;padding:14px;margin-bottom:16px;box-shadow:0 10px 25px rgba(0,0,0,.08);display:flex;gap:10px;align-items:center;flex-wrap:wrap}.tab{display:inline-flex;align-items:center;justify-content:center;min-width:118px;padding:12px 18px;border-radius:14px;border:1px solid #e4e0d7;text-decoration:none;color:#183326;font-weight:800;background:#fafafa}.tab.active{background:#0e281d;color:white;border-color:#0e281d}.tab.exclusive{background:#fff7df;color:#8a650f}.tab.exclusive.active{background:#b89545;color:white;border-color:#b89545}.searchform{background:white;border-radius:18px;padding:16px;margin-bottom:22px;box-shadow:0 10px 25px rgba(0,0,0,.08);display:grid;grid-template-columns:1fr 1fr 120px;gap:10px}.searchform input{padding:13px;border:1px solid #ddd;border-radius:12px;text-align:right}.searchform button{background:#0e281d;color:white;border:0;border-radius:12px;font-weight:bold}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}.card{background:white;border-radius:22px;overflow:hidden;box-shadow:0 14px 35px rgba(0,0,0,.12);text-decoration:none;color:#222;transition:.22s;display:block;position:relative}.card:hover{transform:translateY(-5px);box-shadow:0 18px 45px rgba(0,0,0,.18)}.badge{position:absolute;top:12px;right:12px;background:#b89545;color:white;padding:8px 12px;border-radius:999px;font-weight:800;z-index:3}.img{height:225px;background:linear-gradient(135deg,#ddd,#f7f7f7);display:flex;align-items:center;justify-content:center;font-size:55px;color:#b89545}.img img{width:100%;height:100%;object-fit:cover}.body{padding:18px}.name{font-size:22px;font-weight:800;margin-bottom:8px;color:#0e281d}.price{font-size:18px;font-weight:700;color:#a37718;margin:6px 0}.desc{color:#555;line-height:1.8;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.details{margin-top:14px;background:#0e281d;color:white;border-radius:12px;padding:11px;text-align:center;font-weight:bold}.empty{background:white;border-radius:18px;padding:28px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,.08)}
+    @media(max-width:700px){.hero h1{font-size:25px}.searchform{grid-template-columns:1fr}.tab{flex:1;min-width:130px}}
   </style>
 </head>
 <body>
-  <header class="top"><div class="inner">
-    <h1>{{ offer.title or 'تفاصيل العرض' }}</h1>
-    <div class="actions"><a href="{{ url_for('visitor_offers') }}">رجوع للعروض</a><a href="{{ url_for('landing') }}">القائمة الرئيسية</a></div>
-  </div></header>
+  <header class="hero">
+    {% if offer_type == 'exclusive' %}
+      <h1>{{ exclusive_title }}</h1>
+      <p style="white-space:pre-wrap">{{ exclusive_features }}</p>
+    {% else %}
+      <h1>عروض روفا جولدن العقارية</h1>
+      <p>اختر المشروع لمشاهدة الصور والمواصفات والتفاصيل كاملة</p>
+    {% endif %}
+    <a class="back" href="{{ url_for('landing') }}">الرجوع للقائمة الرئيسية</a>
+  </header>
   <main class="wrap">
-    <section class="main-img">
-      {% if images and images[0] %}<img src="{{ images[0] }}" alt="{{ offer.title }}">{% else %}<div class="placeholder">🏡</div>{% endif %}
+    <div class="filterbar">
+      <a class="tab {% if offer_type != 'exclusive' %}active{% endif %}" href="{{ url_for('visitor_offers', q=q, location=location, type='all') }}">الكل</a>
+      <a class="tab exclusive {% if offer_type == 'exclusive' %}active{% endif %}" href="{{ url_for('visitor_offers', q=q, location=location, type='exclusive') }}">العروض الحصرية</a>
+    </div>
+    <form method="get" class="searchform">
+      <input type="hidden" name="type" value="{{ offer_type or 'all' }}">
+      <input name="q" value="{{q or ''}}" placeholder="ابحث باسم المشروع أو السعر أو الوصف">
+      <input name="location" value="{{location or ''}}" placeholder="الحي / الموقع">
+      <button>بحث</button>
+    </form>
+    {% if offers %}
+    <section class="grid">
+      {% for offer in offers %}
+      <a class="card" href="{{ url_for('visitor_offer_detail', oid=offer.id) }}">
+        {% if offer.is_exclusive %}<div class="badge">حصري ⭐</div>{% endif %}
+        <div class="img">{% if offer.image_data %}<img src="{{ offer.image_data }}" alt="{{ offer.title }}">{% else %}🏡{% endif %}</div>
+        <div class="body">
+          <div class="name">{{ offer.title or 'مشروع عقاري' }}</div>
+          {% if offer.price %}<div class="price">{{ offer.price }}</div>{% endif %}
+          {% if offer.description %}<div class="desc">{{ offer.description }}</div>{% endif %}
+          <div class="details">عرض التفاصيل والصور</div>
+        </div>
+      </a>
+      {% endfor %}
     </section>
-    <section class="info">
-      <h2>{{ offer.title or 'مشروع عقاري' }}</h2>
-      {% if offer.price %}<div class="price">{{ offer.price }}</div>{% endif %}
-      {% if offer.description %}<div class="desc">{{ offer.description }}</div>{% endif %}
-      <div class="contact">
-        <a class="gold" href="https://wa.me/966" target="_blank">تواصل واتساب</a>
-        <a href="tel:">اتصال</a>
-      </div>
-    </section>
-    {% if images|length > 1 %}
-    <h2>صور المشروع</h2>
-    <section class="gallery">
-      {% for img in images %}<img src="{{ img }}" alt="صورة {{ loop.index }}">{% endfor %}
-    </section>
+    {% else %}
+    <div class="empty">لا توجد عروض متاحة حالياً.</div>
     {% endif %}
   </main>
 </body>

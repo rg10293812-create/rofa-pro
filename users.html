@@ -1,13 +1,33 @@
 {% extends 'base.html' %}{% block content %}
-<div class="loginbox">
-<h2>تسجيل الدخول للأعضاء</h2>
-<form method="post" autocomplete="off">
-<input name="username" placeholder="اسم المستخدم" required autocomplete="username">
-<input name="password" type="password" placeholder="كلمة المرور" required autocomplete="current-password">
-<button class="btn green" style="width:100%">دخول</button>
+<h2>إدارة العروض الظاهرة للزوار</h2>
+<p class="small">إضافة العروض، تحديد العروض الحصرية، وتعديل نص مميزات العروض الحصرية الذي يظهر للزائر.</p>
+
+{% if current_user.role in ['admin','executive'] %}
+<div class="card">
+<h3>تعديل مميزات العروض الحصرية للزائر</h3>
+<form method="post">
+  <input type="hidden" name="form_action" value="exclusive_settings">
+  <input name="exclusive_title" value="{{ exclusive_title }}" placeholder="عنوان صفحة العروض الحصرية">
+  <textarea name="exclusive_features" placeholder="اكتب المميزات التي تظهر للزائر عند الضغط على العروض الحصرية">{{ exclusive_features }}</textarea>
+  <button class="btn gold">حفظ مميزات العروض الحصرية</button>
 </form>
-<div style="text-align:center;margin-top:14px">
-<a class="btn gray" href="{{ url_for('landing') }}">رجوع للقائمة الرئيسية</a>
 </div>
+{% endif %}
+
+<div class="card">
+<h3>إضافة عرض تسويقي للزائر</h3>
+{% if current_user.role in ['admin','executive','marketer'] %}
+<form id="offerForm" method="post" enctype="multipart/form-data" onsubmit="clearDraft('offerForm')">
+  <div class="autosave" id="offerForm_note">بيانات العرض تحفظ كمسودة تلقائياً، والصور تحفظ عند الضغط على إضافة العرض.</div>
+  <div class="row"><input name="title" placeholder="اسم المشروع مثل: فلة الحمراء" required><input name="price" placeholder="السعر"><input type="file" name="images" accept="image/*" multiple><select name="status"><option value="available">متاح</option><option value="reserved">محجوز</option><option value="sold">مباع</option></select>{% if current_user.role in ['admin','executive'] %}<select name="ext_marketer_id"><option value="">اختر المسوق الخارجي - اختياري</option>{% for m in marketers %}<option value="{{m.id}}">{{m.name}}</option>{% endfor %}</select>{% endif %}</div>
+  <label style="display:flex;gap:8px;align-items:center;margin:12px 0;font-weight:bold"><input type="checkbox" name="is_exclusive" value="1" style="width:auto"> هذا عرض حصري ويظهر داخل خيار العروض الحصرية</label>
+  <p class="small">اختر أكثر من صورة: الصورة الأولى تظهر كصورة رئيسية للزائر، وباقي الصور تظهر داخل تفاصيل المشروع.</p>
+  <textarea name="description" placeholder="تفاصيل المشروع: الحي، المساحة، الغرف، الضمانات، المميزات، الموقع..."></textarea>
+  <button class="btn gold">إضافة العرض</button>
+</form><script>loadDraft('offerForm')</script>
+{% else %}<p class="small">صلاحيتك مشاهدة العروض فقط.</p>{% endif %}
 </div>
+
+<h3>العروض الحالية</h3>
+{% for o in offers %}<div class="card"><h3>{{o.title}} {% if o.is_exclusive %}<span style="background:#b89545;color:white;border-radius:999px;padding:5px 10px;font-size:13px">حصري ⭐</span>{% endif %}</h3><p><b>السعر:</b> {{o.price}} | <b>الحالة:</b> <span class="status {{o.status}}">{{status_labels.get(o.status,o.status)}}</span> | <b>المسوق الخارجي:</b> {{external_marketer_name(o.ext_marketer_id)}}</p><p style="white-space:pre-wrap">{{o.description}}</p>{% if o.image_data %}<img class="img" src="{{o.image_data}}">{% endif %}<p><a class="btn" href="{{ url_for('visitor_offer_detail', oid=o.id) }}" target="_blank">معاينة كزائر</a></p>{% if current_user.role in ['admin','executive','marketer'] %}<form method="post" action="{{url_for('offer_status',oid=o.id)}}"><select name="status" style="width:auto"><option value="available" {% if o.status=='available' %}selected{% endif %}>متاح</option><option value="reserved" {% if o.status=='reserved' %}selected{% endif %}>محجوز</option><option value="sold" {% if o.status=='sold' %}selected{% endif %}>مباع</option></select><button class="btn gold">تحديث الحالة</button></form><form method="post" action="{{url_for('offer_exclusive',oid=o.id)}}" style="margin-top:8px"><label style="font-weight:bold"><input type="checkbox" name="is_exclusive" value="1" {% if o.is_exclusive %}checked{% endif %} style="width:auto"> عرض حصري</label> <button class="btn">تحديث نوع العرض</button></form>{% endif %}{% if can_delete_content(current_user) %}<form method="post" action="{{url_for('delete_offer',oid=o.id)}}"><button class="btn red" onclick="return confirm('حذف العرض؟')">حذف</button></form>{% endif %}</div>{% else %}<p class="small">لا توجد عروض حالياً.</p>{% endfor %}
 {% endblock %}

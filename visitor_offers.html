@@ -1,32 +1,68 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rufa Golden Cloud</title>
-  <style>
-    *{box-sizing:border-box} body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#0f1f18,#c8a85a);min-height:100vh;color:#fff;display:flex;align-items:center;justify-content:center;padding:25px}.wrap{width:min(1050px,100%);text-align:center}.brand{font-size:42px;font-weight:800;margin-bottom:8px}.sub{opacity:.9;margin-bottom:38px;font-size:18px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}.card{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(12px);border-radius:28px;padding:32px;box-shadow:0 20px 45px rgba(0,0,0,.25);transition:.25s;text-decoration:none;color:#fff}.card:hover{transform:translateY(-6px);background:rgba(255,255,255,.2)}.icon{font-size:54px;margin-bottom:12px}.title{font-size:28px;font-weight:800;margin:10px 0}.desc{line-height:1.9;opacity:.92}.btn{display:inline-block;margin-top:22px;background:#0b4d2a;color:white;padding:14px 34px;border-radius:999px;font-weight:700}.visitor .btn{background:#8a6a20}.footer{margin-top:28px;opacity:.75;font-size:13px}
-  </style>
-</head>
-<body>
-  <main class="wrap">
-    <div class="brand">Rufa Golden Cloud</div>
-    <div class="sub">اختر طريقة الدخول المناسبة لك</div>
-    <section class="cards">
-      <a class="card" href="{{ url_for('member_entry') }}">
-        <div class="icon">👤</div>
-        <div class="title">عضو</div>
-        <div class="desc">دخول خاص للمدير والمسوقين لإدارة العقارات والعروض والأرقام والصلاحيات.</div>
-        <span class="btn">تسجيل الدخول</span>
-      </a>
-      <a class="card visitor" href="{{ url_for('visitor_offers') }}">
-        <div class="icon">🏡</div>
-        <div class="title">زائر</div>
-        <div class="desc">مشاهدة العروض العقارية المتاحة بشكل احترافي مع الصور والمعلومات الأساسية.</div>
-        <span class="btn">عرض الفلل والعروض</span>
-      </a>
-    </section>
-    <div class="footer">شركة روفا جولدن العقارية</div>
-  </main>
-</body>
-</html>
+{% extends 'base.html' %}{% block content %}
+<a class="btn gray" href="{{url_for('index')}}">الرئيسية</a>
+<h2>إدارة الموظفين والصلاحيات</h2>
+
+<div class="card">
+<h3>إضافة حساب موظف جديد</h3>
+<form method="post">
+<div class="row">
+  <input name="full_name" placeholder="الاسم الكامل">
+  <input name="username" placeholder="اسم المستخدم" required>
+  <input name="password" type="password" placeholder="كلمة المرور" required>
+  <input name="phone" placeholder="جوال الموظف / المستخدم">
+  <input name="email" placeholder="البريد الإلكتروني">
+  <input name="commission_rate" placeholder="نسبة الموظف الافتراضية في الصفقات مثل 0.5">
+</div>
+<select name="role">
+{% for key,label in roles.items() %}<option value="{{key}}">{{label}}</option>{% endfor %}
+</select>
+<div class="perm-grid">
+  <label><input type="checkbox" name="can_delete"> السماح بالحذف</label>
+  <label><input type="checkbox" name="can_manage_users"> السماح بإدارة الموظفين</label>
+</div>
+<p class="small">ملاحظة: المدير العام يحصل تلقائياً على جميع الصلاحيات.</p>
+<button class="btn green">إضافة الحساب</button>
+</form>
+</div>
+
+<h3>الحسابات والموظفون الحاليون</h3>
+<table>
+<tr><th>الاسم</th><th>اسم المستخدم</th><th>الجوال</th><th>النسبة</th><th>الصلاحية</th><th>صلاحيات إضافية</th><th>الحالة</th><th>الإجراءات</th></tr>
+{% for u in rows %}
+<tr>
+<td>{{u.full_name}}</td>
+<td>{{u.username}}</td>
+<td>{{u.phone}}</td>
+<td>{{u.commission_rate}}%</td>
+<td>{{roles.get(u.role,u.role)}}</td>
+<td>
+  {% if u.role == 'admin' %}<span class="badge">كل الصلاحيات</span>{% else %}
+    {% if u.can_delete %}<span class="badge good">حذف</span>{% endif %}
+    {% if u.can_manage_users %}<span class="badge good">إدارة موظفين</span>{% endif %}
+    {% if not u.can_delete and not u.can_manage_users %}<span class="small">لا توجد</span>{% endif %}
+  {% endif %}
+</td>
+<td>{{'فعال' if u.is_active else 'معطل'}}</td>
+<td>
+  <details>
+    <summary class="btn">تعديل الصلاحيات</summary>
+    <form method="post" action="{{url_for('update_user_permissions',uid=u.id)}}" class="mini-form">
+      <select name="role">
+        {% for key,label in roles.items() %}<option value="{{key}}" {% if u.role==key %}selected{% endif %}>{{label}}</option>{% endfor %}
+      </select>
+      <input name="phone" value="{{u.phone}}" placeholder="الجوال">
+      <input name="email" value="{{u.email}}" placeholder="البريد">
+      <input name="commission_rate" value="{{u.commission_rate}}" placeholder="نسبة العمولة">
+      <label><input type="checkbox" name="can_delete" {% if u.can_delete or u.role=='admin' %}checked{% endif %}> يسمح له بالحذف</label>
+      <label><input type="checkbox" name="can_manage_users" {% if u.can_manage_users or u.role=='admin' %}checked{% endif %}> يسمح له بإدارة الموظفين</label>
+      <label><input type="checkbox" name="is_active" {% if u.is_active %}checked{% endif %}> الحساب فعال</label>
+      <button class="btn green">حفظ الصلاحيات</button>
+    </form>
+  </details>
+  <form method="post" action="{{url_for('toggle_user',uid=u.id)}}" style="display:inline"><button class="btn gold">{{'تعطيل' if u.is_active else 'تفعيل'}}</button></form>
+  <form method="post" action="{{url_for('delete_user',uid=u.id)}}" style="display:inline"><button class="btn red" onclick="return confirm('حذف الحساب؟')">حذف</button></form>
+</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
